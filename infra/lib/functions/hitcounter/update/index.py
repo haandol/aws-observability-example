@@ -1,6 +1,5 @@
 import json
 from typing import Dict, Any
-from aws_xray_sdk.core.models import http
 from aws_lambda_powertools import Logger, Tracer, Metrics
 from aws_lambda_powertools.logging import correlation_paths
 from .services import update_count
@@ -26,8 +25,8 @@ def handler(event: Dict[str, Any], context: Any):
         )
 
     httpContext = event['requestContext']['http']
-    tracer.put_annotation(http.URL, httpContext['path'])
-    tracer.put_annotation(http.METHOD, httpContext['method'])
+    tracer.put_annotation('Path', httpContext['path'])
+    tracer.put_annotation('Method', httpContext['method'])
 
     count = update_count(path)
     return Response.success(body=json.dumps({
