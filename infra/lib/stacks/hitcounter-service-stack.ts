@@ -42,13 +42,13 @@ export class HitcounterServiceStack extends cdk.Stack {
       credentialsArn: role.roleArn,
       requestParameters: {
         QueueUrl: `${service.queue.queueUrl}`,
-        MessageBody: '$request.body.message',
+        MessageBody: '$request.body.path',
       },
     })
     props.api.addIntegration({
       scope: this,
-      routeId: `SumCount`,
-      path: '/sum/{proxy+}',
+      routeId: `AsyncUpdate`,
+      path: '/sqs',
       method: apigwv2.HttpMethod.POST,
       integration: integ,
     })

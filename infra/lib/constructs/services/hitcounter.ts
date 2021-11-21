@@ -64,10 +64,11 @@ export class HitCounterService extends cdk.Construct {
       code: lambda.Code.fromAsset(path.resolve(__dirname, '..', '..', 'functions', 'hitcounter')),
       handler: 'consumer.index.handler',
       runtime: lambda.Runtime.PYTHON_3_8,
-      // tracing: lambda.Tracing.ACTIVE,
+      tracing: lambda.Tracing.ACTIVE,
       layers,
       environment: {
         TABLE_NAME: Table.Name,
+        QUEUE_URL: this.queue.queueUrl,
         POWERTOOLS_SERVICE_NAME: 'Consumer',
         POWERTOOLS_METRICS_NAMESPACE: 'HitCounter',
       },
