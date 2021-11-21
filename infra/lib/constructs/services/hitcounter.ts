@@ -15,14 +15,22 @@ export class HitCounterService extends cdk.Construct {
   constructor(scope: cdk.Construct, id: string) {
     super(scope, id)
 
+    const layers = [
+      lambda.LayerVersion.fromLayerVersionArn(this, `LambdaPowerToolsLayer`, `arn:aws:lambda:${cdk.Stack.of(this).region}:017000801446:layer:AWSLambdaPowertoolsPython:4`)
+    ]
+
     const ns = App.Context.Namespace
     this.updateCount = new lambda.Function(this, `UpdateCount`, {
       functionName: `${ns}UpdateCount`,
       code: lambda.Code.fromAsset(path.resolve(__dirname, '..', '..', 'functions', 'hitcounter')),
       handler: 'update.index.handler',
       runtime: lambda.Runtime.PYTHON_3_8,
+      // tracing: lambda.Tracing.ACTIVE,
+      layers,
       environment: {
         TABLE_NAME: Table.Name,
+        POWERTOOLS_SERVICE_NAME: 'UpdateCount',
+        POWERTOOLS_METRICS_NAMESPACE: 'HitCounter',
       },
     })
     this.updateCount.addToRolePolicy(new iam.PolicyStatement({
@@ -35,8 +43,12 @@ export class HitCounterService extends cdk.Construct {
       code: lambda.Code.fromAsset(path.resolve(__dirname, '..', '..', 'functions', 'hitcounter')),
       handler: 'get.index.handler',
       runtime: lambda.Runtime.PYTHON_3_8,
+      tracing: lambda.Tracing.ACTIVE,
+      layers,
       environment: {
         TABLE_NAME: Table.Name,
+        POWERTOOLS_SERVICE_NAME: 'GetCount',
+        POWERTOOLS_METRICS_NAMESPACE: 'HitCounter',
       },
     })
     this.getCount.addToRolePolicy(new iam.PolicyStatement({
@@ -52,8 +64,12 @@ export class HitCounterService extends cdk.Construct {
       code: lambda.Code.fromAsset(path.resolve(__dirname, '..', '..', 'functions', 'hitcounter')),
       handler: 'consumer.index.handler',
       runtime: lambda.Runtime.PYTHON_3_8,
+      // tracing: lambda.Tracing.ACTIVE,
+      layers,
       environment: {
         TABLE_NAME: Table.Name,
+        POWERTOOLS_SERVICE_NAME: 'Consumer',
+        POWERTOOLS_METRICS_NAMESPACE: 'HitCounter',
       },
     })
     this.consumer.addToRolePolicy(new iam.PolicyStatement({

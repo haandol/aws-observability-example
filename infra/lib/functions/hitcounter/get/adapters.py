@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Protocol, Callable
+from aws_lambda_powertools import Tracer
 
+tracer = Tracer()
 
 class FetchTable(Protocol):
     get_item: Callable
@@ -16,6 +18,7 @@ class DdbFetchAdapter(FetchAdapter):
     def __init__(self, table: FetchTable):
         self.table = table
 
+    @tracer.capture_method
     def fetch(self, path: str) -> int:
         resp = self.table.get_item(
             Key={ 'PK': path },
