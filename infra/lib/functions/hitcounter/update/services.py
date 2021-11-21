@@ -1,10 +1,13 @@
 import os
 import boto3
+from aws_lambda_powertools import Tracer
 from .adapters import DdbUpdateAdapter
 
+tracer = Tracer()
 table = None
 
 
+@tracer.capture_method
 def update_count(path: str) -> int:
     global table
     if not table:

@@ -4,6 +4,7 @@ from aws_lambda_powertools import Tracer
 
 tracer = Tracer()
 
+
 class FetchTable(Protocol):
     get_item: Callable
 

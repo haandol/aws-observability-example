@@ -25,7 +25,7 @@ export class HitCounterService extends cdk.Construct {
       code: lambda.Code.fromAsset(path.resolve(__dirname, '..', '..', 'functions', 'hitcounter')),
       handler: 'update.index.handler',
       runtime: lambda.Runtime.PYTHON_3_8,
-      // tracing: lambda.Tracing.ACTIVE,
+      tracing: lambda.Tracing.ACTIVE,
       layers,
       environment: {
         TABLE_NAME: Table.Name,

@@ -1,5 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Protocol, Callable
+from aws_lambda_powertools import Tracer
+
+tracer = Tracer()
 
 
 class UpdateTable(Protocol):
@@ -16,6 +19,7 @@ class DdbUpdateAdapter(UpdateAdapter):
     def __init__(self, table: UpdateTable):
         self.table = table
 
+    @tracer.capture_method
     def update(self, path: str) -> int:
         resp = self.table.update_item(
             Key={ 'PK': path },
